@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mafia: Crimson Sin</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@900&family=Roboto+Mono:wght@400;700&family=Special+Elite&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+</head>
+
+<body>
+    <div class="overlay-grain"></div>
+    <div class="overlay-vignette"></div>
+    <div class="blood-overlay"></div>
+    <div class="rain-container"></div>
+
+    <main id="game-app">
+        <!-- Lobby / Character Generation -->
+        <div id="lobby-screen" class="screen active">
+            <header class="lobby-header">
+                <div class="lang-selector">
+                    <button class="lang-btn" data-lang="ru">RU</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="ua">UA</button>
+                </div>
+                <div class="social-links">
+                    <button class="social-btn" id="how-to-play-btn"><i class="fa-solid fa-book-open"></i> <span
+                            id="how-to-play-text">HOW TO PLAY</span></button>
+                    <a href="https://github.com/Adiru3" target="_blank" class="social-btn"><i
+                            class="fa-brands fa-github"></i> GITHUB</a>
+                    <a href="https://adiru3.github.io/Donate/" target="_blank" class="social-btn"><i
+                            class="fa-solid fa-heart"></i> DONATE</a>
+                </div>
+                <h1 class="glitch" data-text="CRIMSON SIN">CRIMSON SIN</h1>
+                <p class="subtitle">WELCOME TO THE SYNDICATE</p>
+            </header>
+
+            <div class="lobby-content">
+                <!-- Step 1: Create or Join -->
+                <div id="lobby-init-ui" class="lobby-init">
+                    <button class="btn-primary" id="create-lobby-btn">CREATE LOBBY</button>
+                    <div class="separator">OR</div>
+                    <div class="join-area">
+                        <input type="text" id="join-code-input" placeholder="CODE" maxlength="6">
+                        <button class="btn-secondary" id="join-lobby-btn">JOIN</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Dossier (Appears after Step 1) -->
+                <div id="player-dossier" class="dossier-card hidden">
+                    <div class="dossier-header">PERSONNEL FILE №7734</div>
+                    <div class="dossier-body">
+                        <div class="dossier-identity">
+                            <div class="avatar-placeholder" id="current-avatar">
+                                <i class="fa-solid fa-user-secret"></i>
+                            </div>
+                            <div class="identity-info">
+                                <span class="identity-alias" id="player-alias">---</span>
+                                <span class="identity-role" id="player-role-badge">---</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>YOUR NICKNAME (REAL NAME)</label>
+                            <input type="text" id="player-nick" placeholder="Enter name..." maxlength="15">
+                        </div>
+
+                        <div class="voice-check-area">
+                            <button class="voice-btn" id="start-voice-check">
+                                <i class="fa-solid fa-microphone"></i> VOICE CHECK
+                            </button>
+                            <div class="voice-waves hidden" id="voice-waves">
+                                <span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lobby-footer hidden" id="lobby-footer">
+                    <div id="ready-status">WAITING FOR PLAYERS...</div>
+                    <div id="lobby-players-list">
+                        <!-- Dynamic player badges will appear here -->
+                    </div>
+                    <div class="lobby-code-display">CODE: <span id="current-lobby-code">---</span></div>
+
+                    <div class="revolver-trigger" id="start-game-btn">
+                        <img src="assets/revolver.png" alt="Revolver">
+                        <span class="trigger-label">PULL THE TRIGGER</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transitions & Game Screens -->
+        <div id="game-screens">
+            <section id="game-legend" class="screen"></section>
+            <section id="game-shooting" class="screen"></section>
+            <section id="marketplace" class="screen"></section>
+            <section id="game-rat" class="screen"></section>
+            <section id="game-loot" class="screen"></section>
+            <section id="game-laundry" class="screen"></section>
+            <section id="game-wiretap" class="screen"></section>
+            <section id="game-evidence" class="screen"></section>
+            <section id="council-table" class="screen"></section>
+            <section id="game-boss" class="screen"></section>
+            <section id="game-roulette" class="screen"></section>
+            <section id="game-final-stand" class="screen"></section>
+            <section id="hall-of-fame" class="screen"></section>
+
+            <div id="spectator-overlay" class="hidden">
+                <div class="spectator-msg">SPECTATING</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Cinematic Overlays -->
+    <div id="cutscene-bars" class="hidden">
+        <div class="bar-top"></div>
+        <div class="bar-bottom"></div>
+        <div id="cutscene-caption"></div>
+    </div>
+    <div id="particle-container"></div>
+    <div id="interaction-overlay" class="hidden"></div>
+    <div id="blood-splatter-container"></div>
+
+    <!-- Audio Controls -->
+    <div id="audio-widget">
+        <button id="mute-btn"><i class="fa-solid fa-volume-high"></i></button>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5">
+    </div>
+
+    <!-- Chat Widget -->
+    <div id="chat-widget">
+        <div class="chat-header">INFORMANT</div>
+        <div class="chat-messages" id="chat-log"></div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Whisper something...">
+        </div>
+    </div>
+
+    <!-- Tutorial Modal -->
+    <div id="tutorial-modal" class="modal hidden">
+        <div class="modal-content dossier-card">
+            <div class="dossier-header" id="tutorial-title">HOW TO PLAY</div>
+            <div class="modal-body" id="tutorial-content">
+                <!-- Content injected via JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="tutorial-prev"><i class="fa-solid fa-arrow-left"></i></button>
+                <span id="tutorial-page-indicator">1 / 3</span>
+                <button class="btn-secondary" id="tutorial-next"><i class="fa-solid fa-arrow-right"></i></button>
+                <button class="btn-primary" id="close-tutorial">GOT IT</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
